@@ -11,25 +11,24 @@ app.use(cors());
 app.use(express.json());
 
 // --- Nodemailer Configuration for Proton Mail ---
-// This configuration requires the Proton Mail Bridge to be active.
-// This will likely fail on a cloud service like Render which cannot run the Bridge.
+// As per Proton Mail documentation for SMTP submission.
 const transporter = nodemailer.createTransport({
-    host: 'smtp.protonmail.ch', // Proton Mail SMTP server
-    port: 587,                  // Standard SMTP port
-    secure: false,              // Use STARTTLS
+    host: 'smtp.protonmail.ch',
+    port: 587,
+    secure: false, // This ensures STARTTLS is used as required by Proton Mail on this port
     auth: {
-        user: process.env.EMAIL_USER, // Your Proton Mail email address
-        pass: process.env.EMAIL_PASS  // Your Proton Mail Bridge password
+        user: process.env.EMAIL_USER, // Your full Proton Mail address
+        pass: process.env.EMAIL_PASS  // Your Proton Mail password (or special app password)
     },
     tls: {
-        rejectUnauthorized: false 
+        rejectUnauthorized: false
     }
 });
 
 // Verify transporter connection on startup
 transporter.verify((error, success) => {
     if (error) {
-        console.error('❌ Email transporter verification failed. This is expected on cloud platforms without Proton Mail Bridge.', error);
+        console.error('❌ Email transporter verification failed. Please check credentials and Proton Mail settings.', error);
     } else {
         console.log('✅ Email transporter is ready to send emails.');
     }
