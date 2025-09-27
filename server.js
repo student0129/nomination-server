@@ -1,7 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-require('dotenv').config(); // For local development with a .env file
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,25 +10,24 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// --- Nodemailer Configuration for Proton Mail ---
-// As per Proton Mail documentation for SMTP submission.
+// --- CORRECTED Nodemailer Configuration for Proton Mail ---
 const transporter = nodemailer.createTransport({
     host: 'smtp.protonmail.ch',
     port: 587,
-    secure: false, // This ensures STARTTLS is used as required by Proton Mail on this port
+    secure: false, // Must be false for port 587, as it uses STARTTLS
     auth: {
-        user: process.env.EMAIL_USER, // Your full Proton Mail address
-        pass: process.env.EMAIL_PASS  // Your Proton Mail password (or special app password)
+        // --- CHANGE #1: Use the correct environment variables ---
+        user: process.env.PROTON_EMAIL, // Your full Proton Mail address (e.g., thecoterie@promontoryai.com)
+        pass: process.env.PROTON_TOKEN  // Your GENERATED TOKEN, not your password
     },
-    tls: {
-        rejectUnauthorized: false
-    }
+    // --- CHANGE #2: Remove unnecessary TLS setting ---
+    // The 'tls' object is generally not needed and can cause issues.
 });
 
 // Verify transporter connection on startup
 transporter.verify((error, success) => {
     if (error) {
-        console.error('❌ Email transporter verification failed. Please check credentials and Proton Mail settings.', error);
+        console.error('❌ Email transporter verification failed!', error);
     } else {
         console.log('✅ Email transporter is ready to send emails.');
     }
@@ -43,7 +42,7 @@ app.get('/wake-up', (req, res) => {
 });
 
 // 2. Form Submission Endpoint
-app.post('/submit', (req, res) => {
+app.post('/submit', async (req, res) => { // --- CHANGE #3: Use modern async/await for cleaner code ---
     const { 
         nominationType, 
         name, 
@@ -65,10 +64,9 @@ app.post('/submit', (req, res) => {
         return res.status(400).json({ message: 'Missing required fields for the nominator.' });
     }
 
-
     // --- Email Content Formatting ---
     let subject, htmlContent;
-
+    
     if (nominationType === 'self') {
         subject = `New Coterie Nomination (Self): ${name}`;
         htmlContent = `
@@ -83,7 +81,7 @@ app.post('/submit', (req, res) => {
                 <li><strong>Community of Interest:</strong> ${community}</li>
             </ul>
             <h3 style="font-family: Arial, sans-serif;">Reason for Fit:</h3>
-            <p style="font-family: Arial,.sans-serif; white-space: pre-wrap;">${qualification}</p>
+            <p style="font-family: Arial, sans-serif; white-space: pre-wrap;">${qualification}</p>
         `;
     } else { // Peer nomination
         subject = `New Coterie Nomination (Peer): ${name} by ${nominatorName}`;
@@ -110,21 +108,21 @@ app.post('/submit', (req, res) => {
     }
 
     const mailOptions = {
-        from: `"The Coterie" <${process.env.EMAIL_USER}>`,
-        to: 'thecoterie@promontoryai.com',
+        from: `"The Coterie" <${process.env.PROTON_EMAIL}>`,
+        to: 'thecoterie@promontoryai.com', // Where you want to receive the notification
         subject: subject,
         html: htmlContent
     };
 
     // --- Send Email ---
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Error sending email:', error);
-            return res.status(500).json({ message: 'Error processing your nomination. Please try again later.' });
-        }
+    try {
+        let info = await transporter.sendMail(mailOptions);
         console.log('Email sent:', info.response);
         res.status(200).json({ message: 'Nomination submitted successfully.' });
-    });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ message: 'Error processing your nomination. Please try again later.' });
+    }
 });
 
 // Start the server
