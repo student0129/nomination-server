@@ -109,13 +109,14 @@ app.post('/submit', async (req, res) => {
         const selfNominatorOptions = {
             from: `"The Coterie" <${process.env.PROTON_EMAIL}>`,
             to: email,
-            subject: 'Your Nomination for The Coterie has been received',
+            subject: 'Your Nomination for The Coterie',
             html: `
-                <div style="font-family: sans-serif; color: #333;">
+                <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
                     <h2 style="color: #002FA7;">Thank You, ${name}.</h2>
-                    <p>We have received your nomination for The Coterie. Your interest in joining this exclusive peer circle for AI, analytics, and data leaders is greatly appreciated.</p>
-                    <p>The Coterie is a curated community where every member is chosen for the value they bring and receive. Our team will carefully review your submission.</p>
-                    <p>We will be in touch within two weeks with the next steps.</p>
+                    <p>We have received your nomination for The Coterie, the exclusive peer circle for senior leaders in AI and analytics.</p>
+                    <p>The Coterie is a curated community where every member is chosen for the perspective they contribute and the value they receive. Your submission is the first step in our vetting process.</p>
+                    <p><b>Next Steps:</b> Our team will carefully review your nomination. We will be in touch within two business weeks regarding the status of your application.</p>
+                    <p>Thank you for your interest in joining a community dedicated to navigating what's next.</p>
                     <p>Sincerely,<br>The Coterie by Promontory AI</p>
                 </div>
             `
@@ -128,10 +129,11 @@ app.post('/submit', async (req, res) => {
             to: nominatorEmail,
             subject: `Thank you for nominating ${name} for The Coterie`,
             html: `
-                <div style="font-family: sans-serif; color: #333;">
-                    <h2 style="color: #002FA7;">Thank you, ${nominatorName}.</h2>
-                    <p>Your nomination of <strong>${name}</strong> for The Coterie has been received. We appreciate you identifying a leader who is shaping what's next in the world of data and AI.</p>
-                    <p>Our team will now reach out to ${name} regarding the next steps. We appreciate your contribution.</p>
+                <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                    <h2 style="color: #002FA7;">Thank you for your contribution, ${nominatorName}.</h2>
+                    <p>Your nomination of <strong>${name}</strong> for The Coterie has been received. Identifying leaders at the forefront of AI and analytics is essential to building this community, and we appreciate your input.</p>
+                    <p><b>Next Steps:</b> We will now review the nomination and reach out to ${name} to begin the vetting process.</p>
+                    <p>Your role in shaping this peer circle is valued.</p>
                     <p>Sincerely,<br>The Coterie by Promontory AI</p>
                 </div>
             `
@@ -142,13 +144,14 @@ app.post('/submit', async (req, res) => {
         const nomineeOptions = {
             from: `"The Coterie" <${process.env.PROTON_EMAIL}>`,
             to: email,
-            subject: 'You have been nominated to join The Coterie',
+            subject: 'A Nomination to Join The Coterie',
             html: `
-                 <div style="font-family: sans-serif; color: #333;">
-                    <h2 style="color: #002FA7;">An Invitation to a Higher Vantage Point.</h2>
+                 <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                    <h2 style="color: #002FA7;">An Invitation from a Peer.</h2>
                     <p>Hello ${name},</p>
-                    <p>You have been nominated by <strong>${nominatorName}</strong> to join <strong>The Coterie</strong>—an exclusive, invite-only peer circle for senior AI, analytics, and data leaders in the Washington D.C. Metro Area.</p>
-                    <p>This nomination is a testament to your influence and leadership in the field. Our team will be in touch shortly with more details about the vetting process and the next steps.</p>
+                    <p>You have been nominated by <strong>${nominatorName}</strong> to join <strong>The Coterie</strong>—an exclusive, invite-only peer circle for senior AI and analytics leaders in the Washington D.C. Metro Area.</p>
+                    <p>The Coterie is where leaders gather to transform individual challenges into collective wisdom and navigate what's next. This nomination recognizes your influence and perspective in the field.</p>
+                    <p><b>Next Steps:</b> There is nothing you need to do at this time. Our team will be in touch shortly with more details about the community and the vetting process.</p>
                     <p>Sincerely,<br>The Coterie by Promontory AI</p>
                 </div>
             `
